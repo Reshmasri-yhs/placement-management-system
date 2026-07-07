@@ -1,0 +1,27 @@
+.Navbar {
+  background: linear-gradient(90deg, #7b2ff7, #f107a3);
+  padding: 22px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* changed from space-between */
+  position: relative;
+  box-shadow: 0 4px 20px rgba(123, 47, 247, 0.25);
+}
+
+.Navbar h1 {
+  color: #fff !important;
+  font-size: 28px !important;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.Profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  position: absolute;   /* pulled out of flex flow so it doesn't push the title off-center */
+  right: 32px;
+}
