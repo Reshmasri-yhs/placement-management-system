@@ -1,0 +1,45 @@
+.field-error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin: -8px 0 8px;
+  text-align: left;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.clear-btn {
+  background-color: #444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background-color: #666;
+}
+
+.links-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #cdb4ff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+}
+
+.link-btn:hover {
+  color: #fff;
+}
