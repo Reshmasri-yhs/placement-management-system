@@ -29,8 +29,7 @@ function App() {
     //console.log(count)
   //}
   return (
-   
- <>
+  <>
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path = "/login" element = {<Login/>}/>
