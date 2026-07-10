@@ -1,10 +1,16 @@
 import './App.css'
 import Navbar from './components/Navbar.jsx'
 import InHead from './components/InHead.jsx'
-import Student from './components/Student.jsx'
 import Sidebar from './components/Sidebar/Sidebar.jsx'
 import Footer from './components/Footer/Footer.jsx'
-import Dashboard from './components/Dashboard/Dashboard.jsx';
+import Login from './Pages/login/login.jsx'
+import Home from './Pages/Home.jsx'
+import Register from './Pages/Registration/Register.jsx'
+import { useState } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import Dashboard from './components/Dashboard/Dashboard.jsx'
+import Layout from './components/Layouts/Layout.jsx'
+import Student from './Pages/Students/Student.jsx'
 //App.jsx the root compnent
 //initially everything is displayed from here
 //creating a root component
@@ -17,36 +23,56 @@ import Dashboard from './components/Dashboard/Dashboard.jsx';
 //<p>Learn Today lead Tomorrow</p>
 // </>
 function App() {
+  //const [count,setCount] = useState(250)
+  //function addStudent(){
+    //setCount(count+1)
+    //console.log(count)
+  //}
   return (
-    <div className="App">
+   
+ <>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path = "/login" element = {<Login/>}/>
+      <Route path = "/Register" element = {<Register/>}/>
       
-      <Navbar/>
-      {/*<p>Learn Today lead Tomorrow</p>*/}
-      
-      {/*<InHead
-           name = "Platform"
-           year = {2024}
-      />
-      <h4>It has a large user base</h4>
+      <Route path="/Layout"element={<Layout/>}>
+      <Route path="/Home"element={<Home/>}/>
+      <Route path="/Dashboard" element={<Dashboard/>}/>
+      </Route>
 
-      <Student
-        name = "Reshma Sri"
-        id   = {509}
-        branch = "CSE"
-        year = {4}
-        cgpa = {8.5}
-        />*/}
-      <div className = 'main'> 
-      <Sidebar/>
-      <Dashboard/>
+    </Routes>
+  
+      {/*
+         <h1>{count}</h1> */}
 
-      </div>
-      
-      <Footer/>
+{/* <button onClick={addStudent}>Add Student</button> */}
 
-     
-    </div>
-  )
-};
+{/* <p>Learn Today Lead Tomorrow</p> */}
 
-export default App
+{/*
+<InHead
+  name="Platform"
+  year={2024}
+/>
+*/}
+
+{/*
+<h4>It has a large user base</h4>
+*/}
+
+{/*
+<Student
+  name="Reshma Sri"
+  id={509}
+  branch="CSE"
+  year={4}
+  cgpa={8.5}
+/>
+*/}
+</>
+)     
+  
+}
+
+export default App;
