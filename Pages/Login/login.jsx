@@ -1,196 +1,208 @@
-import { useState } from "react";
 import "./login.css";
-import Dashboard from "../../components/Dashboard/Dashboard";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {FaEye,FaEyeSlash} from "react-icons/fa";
+import {GoogleLogin} from "@react-oauth/google";
+import API from "../../api/api.js";
 
-function Login({}) {
-  const [logged, setLogin] = useState(false);
-  const [studentName, setStudentName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [errors,setErrors] = useState({});
-  
-  
-    
-function ValidateFields() {
-  const newErrors = {};
+function Login(){
 
-  
-  if (studentName.trim() === "") {
-    newErrors.studentName = "Name is required";
-  }
+const navigate=useNavigate();
 
-     
-  const emailPattern =
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
+const[email,setEmail]=useState("");
+const[password,setPassword]=useState("");
+const[showPassword,setShowPassword]=useState(false);
+const[message,setMessage]=useState("");
+const[loading,setLoading]=useState(false);
+const[errors,setErrors]=useState({});
 
-  if (email.trim() === "") {
-    newErrors.email = "Email is required";
-  } else if (!emailPattern.test(email)) {
-    newErrors.email = "Enter a valid email";
-  }
+const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  
-  const passwordPattern =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+const validateFields=()=>{
 
-  if (password.trim() === "") {
-    newErrors.password = "Password is required";
-  } else if (!passwordPattern.test(password)) {
-    newErrors.password =
-      "Password must contain uppercase, lowercase, number and special character";
-  }
+const newErrors={};
 
-  setErrors(newErrors);
+if(!email.trim()) newErrors.email="Email is required";
+else if(!emailPattern.test(email)) newErrors.email="Enter valid email";
 
-  return Object.keys(newErrors).length === 0;
-}
-        function handleLoading() {
-    if (!ValidateFields()){
-        setMessage("");
-    
-      return;
-    }
-  
-    setLoading(true);
-    setMessage("");
+if(!password.trim()) newErrors.password="Password is required";
+else if(password.length<8) newErrors.password="Password must contain minimum 8 characters";
 
-    setTimeout(() => {
-      if (
-        studentName === "Reshma" &&
-        email === "reshma@gmail.com" &&
-        password === "Password@123"
-      ) {
-        setMessage("Login Successful ");
-        setLogin(true);
-      } else {
-        setMessage("Invalid Username or Password ");
-      }
+setErrors(newErrors);
 
-      setLoading(false);
-    }, 2000);
-  }
+return Object.keys(newErrors).length===0;
 
-  function handleClear() {
-    
-    setStudentName("");
-    setEmail("");
-    setPassword("");
-    setShowPassword(false);
-    setMessage("");
-    setErrors({});
-  }
-  function handleLogout() {
-    setLogin(false);
-    handleClear();
-  }
+};
 
-  function handleForgotPassword() {
-    setMessage("A password reset link would be sent to your email.");
-  }
-  function handleRegisterNavigate() {
-    setMessage("Redirecting to Register page...");
-  }
+const handleLogin=async(e)=>{
 
-  return (
-    <>
-      {!logged ? (
-        <div className="login-container">
-          <div className="login-box">
-            <h1>Placement Management System</h1>
+e.preventDefault();
 
-            <input
-              type="text"
-              placeholder="Enter Your Name"
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-            />
-            {errors.studentName && ( <p className="field-error">{errors.studentName}</p>)}
-
-            <input
-              type="email"
-              placeholder="Enter Your Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {errors.email && <p className="field-error">{errors.Email}</p>}
-
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {errors.password && <p className="field-error">{errors.Password}</p>}
-
-            <button
-              type="button"
-              className="show-password-btn"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? "Hide Password" : "Show Password"}
-            </button>
-            
-            <div className="button-row">
-            <button
-              
-              className="login-btn"
-              onClick={handleLoading}
-              disabled={loading}
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-
-            
-            
-
-            </div>
-            <div className="links-row">
-            <button 
-            type="button"
-            className="link-btn"
-            onClick={handleForgotPassword}
-            >
-              Forget Password Mate ?
-            </button>
-
-            <button 
-            type="button"
-            className="link-btn"
-            onClick={handleRegisterNavigate}
-            >
-              New User? Register
-            </button>
-            </div>
-            {message && <p className="message">{message}</p>}
-          </div>
-        </div>
-      ) : (
-
-        <>
-          <h2 className="welcome">
-            Welcome Back, {studentName}!
-          </h2>
-
-          <Dashboard />
-
-          <div className="logout-container">
-            <button
-              className="logout-btn"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-            </div>
-          
-        </>
-      )}
-    </>
-  );
+if(!validateFields()){
+setMessage("");
+return;
 }
 
+try{
 
+setLoading(true);
+setMessage("");
+
+const response=await API.post("/users/login",{email,password});
+
+localStorage.setItem("loggedUser",JSON.stringify(response.data.user));
+
+setMessage("Login Successful");
+
+setTimeout(()=>navigate("/"),1000);
+
+}catch(error){
+
+console.log(error);
+
+setMessage(error.response?.data?.message||"Login failed");
+
+}finally{
+
+setLoading(false);
+
+}
+
+};
+
+const handleGoogleLogin=async(res)=>{
+
+try{
+
+setLoading(true);
+setMessage("");
+
+const response=await API.post("/users/google-login",{
+token:res.credential
+});
+
+localStorage.setItem("loggedUser",JSON.stringify(response.data.user));
+
+setMessage("Google Login Successful");
+
+setTimeout(()=>navigate("/"),1000);
+
+}catch(error){
+
+console.log(error);
+
+setMessage(error.response?.data?.message||"Google Login Failed");
+
+}finally{
+
+setLoading(false);
+
+}
+
+};
+
+return(
+
+<div className="login-container">
+
+<div className="login-box">
+
+<h2>Good to see you!!</h2>
+
+<form onSubmit={handleLogin}>
+
+<input
+type="email"
+placeholder="Enter Your Email"
+value={email}
+onChange={(e)=>setEmail(e.target.value)}
+/>
+
+{errors.email&&<p className="field-error">{errors.email}</p>}
+
+<div className="password-wrapper">
+
+<input
+type={showPassword?"text":"password"}
+placeholder="Enter Password"
+value={password}
+onChange={(e)=>setPassword(e.target.value)}
+/>
+
+<span
+className="eye-icon"
+onClick={()=>setShowPassword(!showPassword)}
+>
+{showPassword?<FaEyeSlash/>:<FaEye/>}
+</span>
+
+</div>
+
+{errors.password&&<p className="field-error">{errors.password}</p>}
+
+<div className="button-row">
+
+<button
+className="login-btn"
+disabled={loading}
+>
+{loading?"Logging in...":"Login"}
+</button>
+
+<button
+type="button"
+className="clear-btn"
+onClick={()=>{
+setEmail("");
+setPassword("");
+setErrors({});
+setMessage("");
+setShowPassword(false);
+}}
+>
+Clear
+</button>
+
+</div>
+
+<div className="links-row">
+
+<button
+type="button"
+className="link-btn"
+onClick={()=>setMessage("Password reset link will be sent to your email.")}
+>
+Forgot Password?
+</button>
+
+<p
+className="register-link"
+onClick={()=>navigate("/register")}
+>
+New user? Register
+</p>
+
+</div>
+
+<div className="google-login">
+
+<GoogleLogin
+onSuccess={handleGoogleLogin}
+onError={()=>console.log("Google Login Failed")}
+/>
+
+</div>
+
+{message&&<p className="message">{message}</p>}
+
+</form>
+
+</div>
+
+</div>
+
+);
+
+}
 
 export default Login;
